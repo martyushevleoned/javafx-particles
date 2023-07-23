@@ -35,7 +35,7 @@ public class Main extends Application {
         borderPane.setLeft(leftPane);
 
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setPrefSize(Settings.scrollPaneWidth,Settings.scrollPaneHeight);
+        scrollPane.setPrefSize(Settings.scrollPaneWidth, Settings.scrollPaneHeight);
         scrollPane.setStyle("-fx-background-color: bbaaff");
         leftPane.setCenter(scrollPane);
 
@@ -63,16 +63,19 @@ public class Main extends Application {
         hBox1.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
         hBox1.setSpacing(Settings.hBoxSpacing);
         hBox1.setStyle("-fx-background-color: aabbcc");
-        Label labelHBox1 = new Label("Center force");
-        labelHBox1.setPrefSize(150, Settings.vBoxContentHeight);
+        Label labelHBox1 = new Label("Number of colors:");
+        labelHBox1.setPrefSize(175, Settings.vBoxContentHeight);
         hBox1.getChildren().add(labelHBox1);
-        TextField textFieldHBox1 = new TextField();
+        TextField textFieldHBox1 = new TextField("4");
         textFieldHBox1.setAlignment(Pos.CENTER_RIGHT);
         hBox1.getChildren().add(textFieldHBox1);
         vBox.getChildren().add(hBox1);
 
+        VBox varilableVBox = createVariableVBox(Integer.parseInt(textFieldHBox1.getText()));
+        vBox.getChildren().add(varilableVBox);
+
         ToggleButton toggleButton = new ToggleButton("Auto commit");
-        toggleButton.setPrefSize(Settings.vBoxWidth,Settings.vBoxContentHeight);
+        toggleButton.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
         vBox.getChildren().add(toggleButton);
 
         Button button3 = new Button("Commit");
@@ -93,7 +96,7 @@ public class Main extends Application {
 //        graphicsContext.fillRoundRect(0, 0, canvas.getWidth(), canvas.getHeight(), 40, 40);
         rightPane.setCenter(canvas);
 
-
+//        Загружаем сцену
         Scene scene = new Scene(group, Settings.screenWidth, Settings.screenHeight);
         stage.setTitle("Particles simulation");
         stage.setScene(scene);
@@ -103,6 +106,31 @@ public class Main extends Application {
         Model model = new Model();
         model.init(graphicsContext);
         model.start();
+    }
+
+    public VBox createVariableVBox(int numberOfColors) {
+        VBox vBox = new VBox();
+        vBox.setSpacing(5);
+        vBox.setStyle("-fx-background-color: aabbcc");
+
+        for (int i = 0; i < numberOfColors; i++) {
+            VBox tempVBox = new VBox();
+            tempVBox.setStyle("-fx-background-color: ffcccc");
+            for (int j = 0; j < numberOfColors; j++) {
+                HBox hBox1 = new HBox();
+                hBox1.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
+                hBox1.setSpacing(Settings.hBoxSpacing);
+                Label labelHBox1 = new Label("color " + (i + 1) + " to " + (j + 1) + ":");
+                labelHBox1.setPrefSize(150, Settings.vBoxContentHeight);
+                hBox1.getChildren().add(labelHBox1);
+                TextField textFieldHBox1 = new TextField("force");
+                textFieldHBox1.setAlignment(Pos.CENTER_RIGHT);
+                hBox1.getChildren().add(textFieldHBox1);
+                tempVBox.getChildren().add(hBox1);
+            }
+            vBox.getChildren().add(tempVBox);
+        }
+        return vBox;
     }
 }
 
