@@ -2,8 +2,8 @@ package com.example.demo;
 
 public class Settings {
 //    Game screen
-    public static final int screenWidth = 800;
-    public static final int screenHeight = 600;
+    public static final int screenWidth = 810;
+    public static final int screenHeight = 610;
     public static final int padding = 5;
     public static final int leftPaneWidth = 200;
     public static final int rightPaneWidth = screenWidth - leftPaneWidth;
@@ -18,6 +18,6 @@ public class Settings {
 
 //    Particles
     public static final double particleSize = 5;
-    public static final double frictionForce = 0.95;
-    public static final double forceDistance = 900;
+    public static final double frictionForce = 0.97;
+    public static final double forceDistance = 70;
 }

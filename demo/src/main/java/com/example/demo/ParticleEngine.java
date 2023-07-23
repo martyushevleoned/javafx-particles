@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class ParticleEngine {
-    private ArrayList<Particle> particles = new ArrayList<>();
-    private ArrayList<Rule> rules = new ArrayList<>();
+    private final ArrayList<Particle> particles = new ArrayList<>();
+    private final ArrayList<Rule> rules = new ArrayList<>();
 
     public void createParticles(int n, Color color) {
         for (int i = 0; i < n; i++) {
@@ -15,8 +15,9 @@ public class ParticleEngine {
         }
     }
 
-    public void createRule(Color acceptor,Color donor,  double force) {
-        rules.add(new Rule(acceptor,donor,  force));
+    public void createRule(Color acceptor, Color donor, double force) {
+        if (force != 0)
+            rules.add(new Rule(acceptor, donor, force));
     }
 
     public void drawParticles(GraphicsContext gc) {
@@ -53,18 +54,21 @@ public class ParticleEngine {
 
         double distance = Math.sqrt((dx * dx) + (dy * dy));
 
+//        double distanceK = Settings.forceDistance / distance;
+        double distanceK = (Settings.forceDistance - distance) / Settings.forceDistance;
+
         if (distance < Settings.forceDistance) {
             if (donor.getX() < acceptor.getX())
-                acceptor.addVelocityX(-force * Math.abs(dx / distance));
+                acceptor.addVelocityX(force * dx / distance * distanceK);
 
-            else if (donor.getX() > acceptor.getX())
-                acceptor.addVelocityX(force * Math.abs(dx / distance));
+            if (donor.getX() > acceptor.getX())
+                acceptor.addVelocityX(force * Math.abs(dx / distance) * distanceK);
 
             if (donor.getY() < acceptor.getY())
-                acceptor.addVelocityY(-force * Math.abs(dy / distance));
+                acceptor.addVelocityY(-force * Math.abs(dy / distance) * distanceK);
 
-            else if (donor.getY() > acceptor.getY())
-                acceptor.addVelocityY(force * Math.abs(dy / distance));
+            if (donor.getY() > acceptor.getY())
+                acceptor.addVelocityY(force * Math.abs(dy / distance) * distanceK);
         }
 
     }

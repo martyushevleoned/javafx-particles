@@ -16,18 +16,41 @@ public class Model {
     }
 
     private void createWorld() {
-        particleEngine.createParticles(20, Color.RED);
-        particleEngine.createParticles(20, Color.GREEN);
-        particleEngine.createParticles(20, Color.BLUE);
+        particleEngine.createParticles(75, Color.CYAN);
+        particleEngine.createParticles(200, Color.RED);
+        particleEngine.createParticles(200, Color.GREEN);
+        particleEngine.createParticles(300, Color.BLUE);
+        particleEngine.createParticles(800, Color.PURPLE);
 
-        particleEngine.createRule(Color.RED,Color.RED,0.2);
-        particleEngine.createRule(Color.BLUE,Color.RED,0.3);
+        particleEngine.createRule(Color.RED,Color.RED,-0.4);
+        particleEngine.createRule(Color.RED,Color.GREEN,-0.1);
+        particleEngine.createRule(Color.RED,Color.BLUE,0.01);
+        particleEngine.createRule(Color.RED,Color.PURPLE,0);
+        particleEngine.createRule(Color.RED,Color.CYAN,0);
+
+        particleEngine.createRule(Color.GREEN,Color.RED,0);
+        particleEngine.createRule(Color.GREEN,Color.GREEN,0.01);
+        particleEngine.createRule(Color.GREEN,Color.BLUE,0.01);
+        particleEngine.createRule(Color.GREEN,Color.PURPLE,0);
+        particleEngine.createRule(Color.GREEN,Color.CYAN,-0.02);
+
+        particleEngine.createRule(Color.BLUE,Color.RED,-0.05);
         particleEngine.createRule(Color.BLUE,Color.GREEN,-0.1);
-        particleEngine.createRule(Color.GREEN,Color.GREEN,0.2);
-        particleEngine.createRule(Color.GREEN,Color.BLUE,-0.1);
-        particleEngine.createRule(Color.RED,Color.BLUE,-0.2);
-        particleEngine.createRule(Color.RED,Color.GREEN,0.2);
-        particleEngine.createRule(Color.BLUE,Color.BLUE,0.1);
+        particleEngine.createRule(Color.BLUE,Color.BLUE,0.008);
+        particleEngine.createRule(Color.BLUE,Color.PURPLE,-0.1);
+        particleEngine.createRule(Color.BLUE,Color.CYAN,-0.03);
+
+        particleEngine.createRule(Color.PURPLE,Color.RED,0.07);
+        particleEngine.createRule(Color.PURPLE,Color.GREEN,-0.1);
+        particleEngine.createRule(Color.PURPLE,Color.BLUE,-0.1);
+        particleEngine.createRule(Color.PURPLE,Color.PURPLE,-0.08);
+        particleEngine.createRule(Color.PURPLE,Color.CYAN,0);
+
+        particleEngine.createRule(Color.CYAN,Color.RED,0);
+        particleEngine.createRule(Color.CYAN,Color.GREEN,0.003);
+        particleEngine.createRule(Color.CYAN,Color.BLUE,0.003);
+        particleEngine.createRule(Color.CYAN,Color.PURPLE,0);
+        particleEngine.createRule(Color.CYAN,Color.CYAN,-0.02);
     }
 
     public void start() {
