@@ -49,28 +49,21 @@ public class ParticleEngine {
 
     private void changeVelocity(Particle donor, Particle acceptor, double force) {
 
+        if (donor.getX() == acceptor.getX() && donor.getY() == acceptor.getY())
+            return;
+
         double dx = donor.getX() - acceptor.getX();
         double dy = donor.getY() - acceptor.getY();
-
         double distance = Math.sqrt((dx * dx) + (dy * dy));
 
-//        double distanceK = Settings.forceDistance / distance;
-        double distanceK = (Settings.forceDistance - distance) / Settings.forceDistance;
+        double distanceK = Settings.forceDistance / distance;
+//        double distanceK = (Settings.forceDistance - distance) / Settings.forceDistance;
 
-        if (distance < Settings.forceDistance) {
-            if (donor.getX() < acceptor.getX())
-                acceptor.addVelocityX(force * dx / distance * distanceK);
+        if (distance > Settings.forceDistance)
+            return;
 
-            if (donor.getX() > acceptor.getX())
-                acceptor.addVelocityX(force * Math.abs(dx / distance) * distanceK);
-
-            if (donor.getY() < acceptor.getY())
-                acceptor.addVelocityY(-force * Math.abs(dy / distance) * distanceK);
-
-            if (donor.getY() > acceptor.getY())
-                acceptor.addVelocityY(force * Math.abs(dy / distance) * distanceK);
-        }
-
+        acceptor.addVelocityX(force * distanceK * dx / distance);
+        acceptor.addVelocityY(force * distanceK * dy / distance);
     }
 
 }
