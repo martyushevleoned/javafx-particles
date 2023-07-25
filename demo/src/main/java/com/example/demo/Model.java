@@ -4,7 +4,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 public class Model {
@@ -15,46 +14,26 @@ public class Model {
         gc = graphicsContext;
     }
 
-    private void createWorld() {
-        particleEngine.createParticles(75, Color.CYAN);
-        particleEngine.createParticles(200, Color.RED);
-        particleEngine.createParticles(200, Color.GREEN);
-        particleEngine.createParticles(300, Color.BLUE);
-        particleEngine.createParticles(800, Color.PURPLE);
+    public void recreate() {
+        particleEngine.restart();
 
-        particleEngine.createRule(Color.RED,Color.RED,-0.4);
-        particleEngine.createRule(Color.RED,Color.GREEN,-0.1);
-        particleEngine.createRule(Color.RED,Color.BLUE,0.01);
-        particleEngine.createRule(Color.RED,Color.PURPLE,0);
-        particleEngine.createRule(Color.RED,Color.CYAN,0);
+        for (int i = 0; i < Settings.countOfColors; i++)
+            particleEngine.createParticles(Settings.countOfParticles[i], Settings.colors[i]);
 
-        particleEngine.createRule(Color.GREEN,Color.RED,0);
-        particleEngine.createRule(Color.GREEN,Color.GREEN,0.01);
-        particleEngine.createRule(Color.GREEN,Color.BLUE,0.01);
-        particleEngine.createRule(Color.GREEN,Color.PURPLE,0);
-        particleEngine.createRule(Color.GREEN,Color.CYAN,-0.02);
+        int indexCounter = 0;
+        for (int i = 0; i < Settings.countOfColors; i++)
+            for (int j = 0; j < Settings.countOfColors; j++) {
+                particleEngine.createRule(Settings.colors[i], Settings.colors[j], Settings.forces[indexCounter]);
+                indexCounter++;
+            }
+    }
 
-        particleEngine.createRule(Color.BLUE,Color.RED,-0.05);
-        particleEngine.createRule(Color.BLUE,Color.GREEN,-0.1);
-        particleEngine.createRule(Color.BLUE,Color.BLUE,0.008);
-        particleEngine.createRule(Color.BLUE,Color.PURPLE,-0.1);
-        particleEngine.createRule(Color.BLUE,Color.CYAN,-0.03);
-
-        particleEngine.createRule(Color.PURPLE,Color.RED,0.07);
-        particleEngine.createRule(Color.PURPLE,Color.GREEN,-0.1);
-        particleEngine.createRule(Color.PURPLE,Color.BLUE,-0.1);
-        particleEngine.createRule(Color.PURPLE,Color.PURPLE,-0.08);
-        particleEngine.createRule(Color.PURPLE,Color.CYAN,0);
-
-        particleEngine.createRule(Color.CYAN,Color.RED,0);
-        particleEngine.createRule(Color.CYAN,Color.GREEN,0.003);
-        particleEngine.createRule(Color.CYAN,Color.BLUE,0.003);
-        particleEngine.createRule(Color.CYAN,Color.PURPLE,0);
-        particleEngine.createRule(Color.CYAN,Color.CYAN,-0.02);
+    public void resetParticles() {
+        particleEngine.resetParticles();
     }
 
     public void start() {
-        createWorld();
+        recreate();
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(30), e -> loop()));
         timeline.setCycleCount(Animation.INDEFINITE);

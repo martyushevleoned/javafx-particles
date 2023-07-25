@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class ParticleEngine {
-    private final ArrayList<Particle> particles = new ArrayList<>();
-    private final ArrayList<Rule> rules = new ArrayList<>();
+    private ArrayList<Particle> particles;
+    private ArrayList<Rule> rules;
 
     public void createParticles(int n, Color color) {
         for (int i = 0; i < n; i++) {
@@ -23,11 +23,12 @@ public class ParticleEngine {
     public void drawParticles(GraphicsContext gc) {
         for (Particle p : particles) {
             gc.setFill(p.getColor());
-            gc.fillRect(p.getX(), p.getY(), Settings.particleSize, Settings.particleSize);
+            gc.fillRect(p.getX(), p.getY(), Settings.sizeOfParticles, Settings.sizeOfParticles);
         }
     }
 
     public void updateParticles() {
+//        rules
         for (Rule r : rules) {
             for (Particle p1 : particles) {
                 if (p1.getColor() != r.getDonorType())
@@ -39,11 +40,18 @@ public class ParticleEngine {
                 }
             }
         }
+//      atomic
+        for (Particle p1 : particles) {
+            for (Particle p2 : particles) {
+                atomicForce(p1, p2);
+            }
+        }
+
 //        Move
         for (Particle p : particles) {
             p.magicCenterForce();
-            p.addVelocity();
             p.frictionForce();
+            p.addVelocity();
         }
     }
 
@@ -56,14 +64,43 @@ public class ParticleEngine {
         double dy = donor.getY() - acceptor.getY();
         double distance = Math.sqrt((dx * dx) + (dy * dy));
 
-        double distanceK = Settings.forceDistance / distance;
-//        double distanceK = (Settings.forceDistance - distance) / Settings.forceDistance;
-
-        if (distance > Settings.forceDistance)
+        if (distance >= Settings.forceDistance)
             return;
 
-        acceptor.addVelocityX(force * distanceK * dx / distance);
-        acceptor.addVelocityY(force * distanceK * dy / distance);
+//        double distanceK = Settings.forceDistance / distance;
+        double distanceK = (Settings.forceDistance - distance) / Settings.forceDistance;
+
+        double weightK = donor.getWeight() / acceptor.getWeight();
+
+        acceptor.addVelocityX(force * (dx / distance) * (distanceK) * (weightK));
+        acceptor.addVelocityY(force * (dy / distance) * (distanceK) * (weightK));
     }
 
+    private void atomicForce(Particle donor, Particle acceptor) {
+        if (Settings.atomicForce == 0)
+            return;
+
+        if (donor.getX() == acceptor.getX() && donor.getY() == acceptor.getY())
+            return;
+
+        double dx = donor.getX() - acceptor.getX();
+        double dy = donor.getY() - acceptor.getY();
+        double distance = Math.sqrt((dx * dx) + (dy * dy));
+
+        if (distance >= Settings.atomicForceDistance)
+            return;
+
+        acceptor.addVelocityX(Settings.atomicForce * dx / distance / acceptor.getWeight());
+        acceptor.addVelocityY(Settings.atomicForce * dy / distance / acceptor.getWeight());
+    }
+
+    public void restart() {
+        particles = new ArrayList<>();
+        rules = new ArrayList<>();
+    }
+
+    public void resetParticles() {
+        for (Particle p : particles)
+            p.reset();
+    }
 }

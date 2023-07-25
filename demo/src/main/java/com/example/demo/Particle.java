@@ -9,15 +9,13 @@ public class Particle {
     private double y;
     private double velosityX;
     private double velosityY;
+    private double weight;
 
     private Color color;
 
     public Particle(Color color) {
-        this.x = randomValue(0, Settings.canvasWidth - Settings.particleSize);
-        this.y = randomValue(0, Settings.canvasHeight - Settings.particleSize);
-        this.velosityX = randomValue(-2, 2);
-        this.velosityY = randomValue(-2, 2);
         this.color = color;
+        reset();
     }
 
     public double randomValue(double min, double max) {
@@ -25,9 +23,9 @@ public class Particle {
         return min + (max - min) * random.nextDouble();
     }
 
-    public void frictionForce(){
-        velosityX *= Settings.frictionForce;
-        velosityY *= Settings.frictionForce;
+    public void frictionForce() {
+        velosityX *= (1 - Settings.frictionForce) / weight;
+        velosityY *= (1 - Settings.frictionForce) / weight;
     }
 
     public void addVelocity() {
@@ -46,11 +44,11 @@ public class Particle {
     public void magicCenterForce() {
         if (x < 0 && velosityX < 0)
             velosityX *= -1;
-        if (x > Settings.canvasWidth - Settings.particleSize && velosityX > 0)
+        if (x > Settings.canvasWidth - Settings.sizeOfParticles && velosityX > 0)
             velosityX *= -1;
         if (y < 0 && velosityY < 0)
             velosityY *= -1;
-        if (y > Settings.canvasHeight - Settings.particleSize && velosityY > 0)
+        if (y > Settings.canvasHeight - Settings.sizeOfParticles && velosityY > 0)
             velosityY *= -1;
     }
 
@@ -64,5 +62,17 @@ public class Particle {
 
     public Color getColor() {
         return color;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void reset() {
+        x = randomValue(0, Settings.canvasWidth - Settings.sizeOfParticles);
+        y = randomValue(0, Settings.canvasHeight - Settings.sizeOfParticles);
+        velosityX = randomValue(-2, 2);
+        velosityY = randomValue(-2, 2);
+        weight = randomValue(1, 1 + Settings.weightError);
     }
 }
