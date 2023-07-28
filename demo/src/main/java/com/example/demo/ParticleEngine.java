@@ -28,7 +28,8 @@ public class ParticleEngine {
     }
 
     public void updateParticles() {
-//        rules
+
+//        rule force
         for (Rule r : rules) {
             for (Particle p1 : particles) {
                 if (p1.getColor() != r.getDonorType())
@@ -40,12 +41,12 @@ public class ParticleEngine {
                 }
             }
         }
-//      atomic
-        for (Particle p1 : particles) {
-            for (Particle p2 : particles) {
-                atomicForce(p1, p2);
-            }
-        }
+
+//        atomic force
+        if (Settings.atomicForce != 0)
+            for (Particle p1 : particles)
+                for (Particle p2 : particles)
+                    atomicForce(p1, p2);
 
 //        Move
         for (Particle p : particles) {
@@ -94,7 +95,7 @@ public class ParticleEngine {
         acceptor.addVelocityY(Settings.atomicForce * dy / distance / acceptor.getWeight());
     }
 
-    public void restart() {
+    public void recreateArrays() {
         particles = new ArrayList<>();
         rules = new ArrayList<>();
     }

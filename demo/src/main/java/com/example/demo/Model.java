@@ -8,18 +8,24 @@ import javafx.util.Duration;
 
 public class Model {
     ParticleEngine particleEngine = new ParticleEngine();
-    GraphicsContext gc;
+    GraphicsContext graphicsContext;
 
-    public void init(GraphicsContext graphicsContext) {
-        gc = graphicsContext;
+    public void initGraphicsContext(GraphicsContext gc) {
+        graphicsContext = gc;
+    }
+
+    public void resetParticles() {
+        particleEngine.resetParticles();
     }
 
     public void recreate() {
-        particleEngine.restart();
+        particleEngine.recreateArrays();
 
+//          create particles
         for (int i = 0; i < Settings.countOfColors; i++)
             particleEngine.createParticles(Settings.countOfParticles[i], Settings.colors[i]);
 
+//          create rules
         int indexCounter = 0;
         for (int i = 0; i < Settings.countOfColors; i++)
             for (int j = 0; j < Settings.countOfColors; j++) {
@@ -28,9 +34,12 @@ public class Model {
             }
     }
 
-    public void resetParticles() {
-        particleEngine.resetParticles();
+    public void commitChanges() {
+//        Commit particles
+//        Commit rules
     }
+
+    ;
 
     public void start() {
         recreate();
@@ -41,16 +50,8 @@ public class Model {
     }
 
     private void loop() {
-        update();
-        draw();
-    }
-
-    private void draw() {
-        gc.clearRect(0, 0, Settings.canvasWidth, Settings.canvasHeight);
-        particleEngine.drawParticles(gc);
-    }
-
-    private void update() {
         particleEngine.updateParticles();
+        graphicsContext.clearRect(0, 0, Settings.canvasWidth, Settings.canvasHeight);
+        particleEngine.drawParticles(graphicsContext);
     }
 }

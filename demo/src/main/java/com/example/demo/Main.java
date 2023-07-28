@@ -11,57 +11,78 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class Main extends Application {
 
     public static void main(String[] args) {
         launch();
     }
+
     Model model = new Model();
+    public static ArrayList<TextField> textFields = new ArrayList<>();
+
+    public void updateTextFields() {
+        for (int i = 0; i < textFields.size(); i++) {
+            Settings.forces[i] = Double.parseDouble(textFields.get(i).getText());
+            model.recreate();
+        }
+    }
 
     @Override
     public void start(Stage stage) {
 
+//        Загружаем сцену
+        Group group = createGroup();
+        Scene scene = new Scene(group, Settings.screenWidth, Settings.screenHeight);
+        stage.setTitle("Particles simulation");
+        stage.setScene(scene);
+        stage.show();
+
+//        Запуск модели
+        model.start();
+    }
+
+    private Group createGroup() {
         Group group = new Group();
 
 //        Основная панель
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefSize(Settings.screenWidth, Settings.screenHeight);
-        borderPane.setStyle("-fx-background-color: ccbbaa");
+        borderPane.setStyle("-fx-background-color: aabbcc");
         group.getChildren().add(borderPane);
 
 //        Левая часть панели
         BorderPane leftPane = new BorderPane();
         leftPane.setPrefSize(Settings.leftPaneWidth, Settings.screenHeight);
         leftPane.setPadding(new Insets(Settings.padding, Settings.padding, Settings.padding, Settings.padding));
-        leftPane.setStyle("-fx-background-color: ffaaff");
         borderPane.setLeft(leftPane);
 
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setPadding(new Insets(Settings.padding, Settings.padding, Settings.padding, Settings.padding));
         scrollPane.setPrefSize(Settings.scrollPaneWidth, Settings.scrollPaneHeight);
-        scrollPane.setStyle("-fx-background-color: bbaaff");
         leftPane.setCenter(scrollPane);
 
         VBox mainVBox = new VBox();
         mainVBox.setPrefWidth(Settings.vBoxWidth);
         mainVBox.setSpacing(Settings.vBoxSpacing);
-        mainVBox.setStyle("-fx-background-color: abfbaf");
         scrollPane.setContent(mainVBox);
 
 //        Наполнение скрол панели
         Label label = new Label("Settings");
-        label.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
+        label.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         label.setAlignment(Pos.CENTER);
         mainVBox.getChildren().add(label);
 
         Button button1 = new Button("Reset"); // переместить частицы в начальное положение
-        button1.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
+        button1.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         button1.setOnAction(actionEvent -> {
             model.resetParticles();
         });
         mainVBox.getChildren().add(button1);
 
         Button button2 = new Button("Random seed"); // случайные правила + пересоздать частицы
-        button2.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
+        button2.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         button2.setOnAction(actionEvent -> {
             Settings.randomSeed();
             model.recreate();
@@ -69,72 +90,38 @@ public class Main extends Application {
         mainVBox.getChildren().add(button2);
 
 //        generate VBoxes
-        VBox baseSettingsVBox = createBaseSettingsVBox();
+        VBox baseSettingsVBox = createSettingsVBox();
         mainVBox.getChildren().add(baseSettingsVBox);
 
-        VBox varilableVBox = createVariableVBox(Settings.countOfColors);
+        VBox varilableVBox = createParticleRulesVBoxes();
         mainVBox.getChildren().add(varilableVBox);
-
-//        Commit
-        ToggleButton toggleButton = new ToggleButton("Auto commit");
-        toggleButton.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        mainVBox.getChildren().add(toggleButton);
-
-        Button button3 = new Button("Commit");
-        button3.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        mainVBox.getChildren().add(button3);
 
 //        Провая часть панели
         BorderPane rightPane = new BorderPane();
         rightPane.setPrefSize(Settings.rightPaneWidth, Settings.screenHeight);
         rightPane.setPadding(new Insets(Settings.padding, Settings.padding, Settings.padding, Settings.padding));
-        rightPane.setStyle("-fx-background-color: aabbcc");
         borderPane.setRight(rightPane);
 
         Canvas canvas = new Canvas();
         canvas.setWidth(Settings.canvasWidth);
         canvas.setHeight(Settings.canvasHeight);
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-//        graphicsContext.fillRoundRect(0, 0, canvas.getWidth(), canvas.getHeight(), 40, 40);
+        model.initGraphicsContext(graphicsContext);
         rightPane.setCenter(canvas);
 
-//        Загружаем сцену
-        Scene scene = new Scene(group, Settings.screenWidth, Settings.screenHeight);
-        stage.setTitle("Particles simulation");
-        stage.setScene(scene);
-        stage.show();
-
-//        Запуск модели
-        model.init(graphicsContext);
-        model.start();
+        return group;
     }
 
-    private VBox createBaseSettingsVBox(){
+    private VBox createSettingsVBox() {
         VBox vBox = new VBox();
-        vBox.setSpacing(4);
+        vBox.setSpacing(Settings.vBoxBlockSpacing);
         vBox.setStyle("-fx-background-color: aabbcc");
 
-        HBox hBox1 = new HBox();
-        hBox1.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox1.setSpacing(Settings.hBoxSpacing);
-        hBox1.setStyle("-fx-background-color: ffcccc");
-        Label labelHBox1 = new Label("Count of colors:");
-        labelHBox1.setPrefSize(175, Settings.vBoxContentHeight);
-        hBox1.getChildren().add(labelHBox1);
-        TextField textFieldHBox1 = new TextField(Integer.toString(Settings.countOfColors));
-        textFieldHBox1.setOnAction(actionEvent -> {
-//            Settings set count of colors
-        });
-        textFieldHBox1.setAlignment(Pos.CENTER_RIGHT);
-        hBox1.getChildren().add(textFieldHBox1);
-        vBox.getChildren().add(hBox1);
-
         HBox hBox2 = new HBox();
-        hBox2.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox2.setSpacing(Settings.hBoxSpacing);
+        hBox2.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox2.setStyle("-fx-background-color: ffcccc");
         Label labelHBox2 = new Label("Size of particles:");
-        labelHBox2.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox2.setPrefSize(160, Settings.textFieldHeight);
         hBox2.getChildren().add(labelHBox2);
         TextField textFieldHBox2 = new TextField(Double.toString(Settings.sizeOfParticles));
         textFieldHBox2.setOnAction(actionEvent -> {
@@ -145,11 +132,10 @@ public class Main extends Application {
         vBox.getChildren().add(hBox2);
 
         HBox hBox3 = new HBox();
-        hBox3.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox3.setSpacing(Settings.hBoxSpacing);
+        hBox3.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox3.setStyle("-fx-background-color: ffcccc");
         Label labelHBox3 = new Label("Force distance:");
-        labelHBox3.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox3.setPrefSize(160, Settings.textFieldHeight);
         hBox3.getChildren().add(labelHBox3);
         TextField textFieldHBox3 = new TextField(Double.toString(Settings.forceDistance));
         textFieldHBox3.setOnAction(actionEvent -> {
@@ -160,11 +146,10 @@ public class Main extends Application {
         vBox.getChildren().add(hBox3);
 
         HBox hBox4 = new HBox();
-        hBox4.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox4.setSpacing(Settings.hBoxSpacing);
+        hBox4.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox4.setStyle("-fx-background-color: ffcccc");
         Label labelHBox4 = new Label("Friction force:");
-        labelHBox4.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox4.setPrefSize(160, Settings.textFieldHeight);
         hBox4.getChildren().add(labelHBox4);
         TextField textFieldHBox4 = new TextField(Double.toString(Settings.frictionForce));
         textFieldHBox4.setOnAction(actionEvent -> {
@@ -175,11 +160,10 @@ public class Main extends Application {
         vBox.getChildren().add(hBox4);
 
         HBox hBox5 = new HBox();
-        hBox5.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox5.setSpacing(Settings.hBoxSpacing);
+        hBox5.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox5.setStyle("-fx-background-color: ffcccc");
         Label labelHBox5 = new Label("Weigh error:");
-        labelHBox5.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox5.setPrefSize(160, Settings.textFieldHeight);
         hBox5.getChildren().add(labelHBox5);
         TextField textFieldHBox5 = new TextField(Double.toString(Settings.weightError));
         textFieldHBox5.setOnAction(actionEvent -> {
@@ -191,11 +175,10 @@ public class Main extends Application {
         vBox.getChildren().add(hBox5);
 
         HBox hBox6 = new HBox();
-        hBox6.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox6.setSpacing(Settings.hBoxSpacing);
+        hBox6.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox6.setStyle("-fx-background-color: ffcccc");
         Label labelHBox6 = new Label("Atomic force:");
-        labelHBox6.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox6.setPrefSize(160, Settings.textFieldHeight);
         hBox6.getChildren().add(labelHBox6);
         TextField textFieldHBox6 = new TextField(Double.toString(Settings.atomicForce));
         textFieldHBox6.setOnAction(actionEvent -> {
@@ -206,11 +189,10 @@ public class Main extends Application {
         vBox.getChildren().add(hBox6);
 
         HBox hBox7 = new HBox();
-        hBox7.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-        hBox7.setSpacing(Settings.hBoxSpacing);
+        hBox7.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox7.setStyle("-fx-background-color: ffcccc");
         Label labelHBox7 = new Label("Atomic distance:");
-        labelHBox7.setPrefSize(175, Settings.vBoxContentHeight);
+        labelHBox7.setPrefSize(160, Settings.textFieldHeight);
         hBox7.getChildren().add(labelHBox7);
         TextField textFieldHBox7 = new TextField(Double.toString(Settings.atomicForceDistance));
         textFieldHBox7.setOnAction(actionEvent -> {
@@ -222,26 +204,33 @@ public class Main extends Application {
 
         return vBox;
     }
-    public VBox createVariableVBox(int numberOfColors) {
-        VBox vBox = new VBox();
-        vBox.setSpacing(8);
-        vBox.setStyle("-fx-background-color: aabbcc");
 
-        for (int i = 0; i < numberOfColors; i++) {
+    private VBox createParticleRulesVBoxes() {
+        VBox vBox = new VBox();
+        vBox.setSpacing(Settings.vBoxSpacing);
+        vBox.setStyle("-fx-background-color: aabbcc");
+        int counter = 0;
+
+        for (int i = 0; i < Settings.countOfColors; i++) {
             VBox tempVBox = new VBox();
-            tempVBox.setStyle("-fx-background-color: ffcccc");
-            tempVBox.setSpacing(1);
-            for (int j = 0; j < numberOfColors; j++) {
+            tempVBox.setSpacing(Settings.vBoxBlockSpacing);
+            tempVBox.setStyle("-fx-background-color: aabbcc");
+            for (int j = 0; j < Settings.countOfColors; j++) {
                 HBox hBox1 = new HBox();
-                hBox1.setPrefSize(Settings.vBoxWidth, Settings.vBoxContentHeight);
-                hBox1.setSpacing(Settings.hBoxSpacing);
+                hBox1.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
+                hBox1.setStyle("-fx-background-color: ffcccc");
                 Label labelHBox1 = new Label("color " + (i + 1) + " to " + (j + 1) + ":");
-                labelHBox1.setPrefSize(150, Settings.vBoxContentHeight);
+                labelHBox1.setPrefSize(70, Settings.textFieldHeight);
                 hBox1.getChildren().add(labelHBox1);
-                TextField textFieldHBox1 = new TextField("force");
-                textFieldHBox1.setAlignment(Pos.CENTER_RIGHT);
-                hBox1.getChildren().add(textFieldHBox1);
+
+                textFields.add(new TextField(String.valueOf(Settings.forces[counter])));
+                textFields.get(counter).setAlignment(Pos.CENTER_RIGHT);
+                textFields.get(counter).setOnAction(actionEvent -> {
+                    updateTextFields();
+                });
+                hBox1.getChildren().add(textFields.get(counter));
                 tempVBox.getChildren().add(hBox1);
+                counter++;
             }
             vBox.getChildren().add(tempVBox);
         }

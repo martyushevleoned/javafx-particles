@@ -10,7 +10,6 @@ public class Particle {
     private double velosityX;
     private double velosityY;
     private double weight;
-
     private Color color;
 
     public Particle(Color color) {

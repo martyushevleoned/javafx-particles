@@ -1,27 +1,27 @@
 package com.example.demo;
 
 import javafx.scene.paint.Color;
-
 import java.util.Random;
 
 public class Settings {
-    //    Game screen
-    public static final int screenWidth = 810;
-    public static final int screenHeight = 610;
-    public static final int padding = 5;
-    public static final int leftPaneWidth = 200;
+    //    init
+    public static final int countOfColors = 4;
+
+    //    Screen settings
+    public static final int padding = 4;
+    public static final int screenWidth = 850 + padding * 2;
+    public static final int screenHeight = 600 + padding * 2;
+    public static final int leftPaneWidth = 250;
     public static final int rightPaneWidth = screenWidth - leftPaneWidth;
     public static final int scrollPaneWidth = leftPaneWidth - padding * 2;
     public static final int scrollPaneHeight = screenHeight - padding * 2;
-    public static final int vBoxWidth = scrollPaneWidth - 19;
-    public static final int vBoxSpacing = 10;
-    public static final int hBoxSpacing = 5;
-    public static final int vBoxContentHeight = 25;
+    public static final int vBoxWidth = scrollPaneWidth - padding * 2 - 15;
+    public static final int vBoxSpacing = 15;
+    public static final int vBoxBlockSpacing = 3;
+    public static final int textFieldHeight = 25;
     public static final int canvasWidth = rightPaneWidth - padding * 2;
     public static final int canvasHeight = screenHeight - padding * 2;
 
-    //    init
-    public static final int countOfColors = 4;
     //    Particles
     public static double sizeOfParticles = 4.5;
     public static double forceDistance = 200;
@@ -54,11 +54,15 @@ public class Settings {
         Settings.forceDistance = forceDistance;
     }
 
-    //    public static final int countOfParticles = 200;
-    public static final Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.PURPLE, Color.CYAN, Color.MAGENTA, Color.YELLOW, Color.BLACK};
-    public static final int[] countOfParticles = {200, 200, 200, 200, 200, 200, 200, 200};
-    public static double[] forces = {0.03379879618309933, -0.008258922146098462, 0.03326852509034975, -0.02247943159917904, 0.05933866403495287, -0.04626611356365415, -0.01580320190411357, -0.01338442870970942, -0.005334334235954155, -0.0468057952362415, -0.014269948022992078, 0.028626660781576524, 0.01762533114806808, 0.03665879848933344, -0.03381834531566062, -0.04244446945231642}; // 4 colors
-
+    public static final Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.PURPLE, Color.CYAN};
+    public static final int[] countOfParticles = {200, 200, 200, 200, 200};
+    public static double[] forces = {
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0
+    };
 
     public static void randomSeed() {
         Random random = new Random();
@@ -67,6 +71,7 @@ public class Settings {
         System.out.print("= {");
         for (int i = 0; i < countOfColors * countOfColors; i++) {
             forces[i] = minForce + (maxForce - minForce) * random.nextDouble();
+            Main.textFields.get(i).setText(String.valueOf(forces[i]));
             System.out.print(forces[i]);
             if (i == countOfColors * countOfColors - 1)
                 continue;
