@@ -9,17 +9,6 @@ public class ParticleEngine {
     private ArrayList<Particle> particles;
     private ArrayList<Rule> rules;
 
-    public void createParticles(int n, Color color) {
-        for (int i = 0; i < n; i++) {
-            particles.add(new Particle(color));
-        }
-    }
-
-    public void createRule(Color acceptor, Color donor, double force) {
-        if (force != 0)
-            rules.add(new Rule(acceptor, donor, force));
-    }
-
     public void drawParticles(GraphicsContext gc) {
         for (Particle p : particles) {
             gc.setFill(p.getColor());
@@ -27,19 +16,31 @@ public class ParticleEngine {
         }
     }
 
+    public void createParticles(int n, Color color) {
+        for (int i = 0; i < n; i++) {
+            particles.add(new Particle(color));
+        }
+    }
+
+    public void createRule(Color acceptor, Color donor, double force) {
+        rules.add(new Rule(acceptor, donor, force));
+    }
+
+
     public void updateParticles() {
 
 //        rule force
         for (Rule r : rules) {
-            for (Particle p1 : particles) {
-                if (p1.getColor() != r.getDonorType())
-                    continue;
-                for (Particle p2 : particles) {
-                    if (p2.getColor() != r.getAcceptorType())
+            if (r.getForce() != 0)
+                for (Particle p1 : particles) {
+                    if (p1.getColor() != r.getDonorType())
                         continue;
-                    changeVelocity(p1, p2, r.getForce());
+                    for (Particle p2 : particles) {
+                        if (p2.getColor() != r.getAcceptorType())
+                            continue;
+                        changeVelocity(p1, p2, r.getForce());
+                    }
                 }
-            }
         }
 
 //        atomic force
@@ -91,8 +92,10 @@ public class ParticleEngine {
         if (distance >= Settings.atomicForceDistance)
             return;
 
-        acceptor.addVelocityX(Settings.atomicForce * dx / distance / acceptor.getWeight());
-        acceptor.addVelocityY(Settings.atomicForce * dy / distance / acceptor.getWeight());
+        double distanceK = (Settings.atomicForceDistance - distance) / Settings.atomicForceDistance;
+
+        acceptor.addVelocityX(Settings.atomicForce * (dx / distance) * (distanceK));
+        acceptor.addVelocityY(Settings.atomicForce * (dy / distance) * (distanceK));
     }
 
     public void recreateArrays() {
@@ -103,5 +106,18 @@ public class ParticleEngine {
     public void resetParticles() {
         for (Particle p : particles)
             p.reset();
+    }
+
+    public void commitRule() {
+        int index = 0;
+        for (Rule r : rules) {
+            r.setForce(Settings.forces[index]);
+            index++;
+        }
+    }
+
+    public void commitParticle() {
+        for (Particle p : particles)
+            p.changeWeight();
     }
 }

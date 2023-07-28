@@ -74,4 +74,8 @@ public class Particle {
         velosityY = randomValue(-2, 2);
         weight = randomValue(1, 1 + Settings.weightError);
     }
+
+    public void changeWeight(){
+        weight = randomValue(1, 1 + Settings.weightError);
+    }
 }

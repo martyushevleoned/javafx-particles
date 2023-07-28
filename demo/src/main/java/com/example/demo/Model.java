@@ -36,13 +36,16 @@ public class Model {
 
     public void commitChanges() {
 //        Commit particles
+        particleEngine.commitParticle();
 //        Commit rules
+        particleEngine.commitRule();
     }
 
     ;
 
     public void start() {
         recreate();
+//        Settings.randomSeed();
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(30), e -> loop()));
         timeline.setCycleCount(Animation.INDEFINITE);

@@ -3,7 +3,7 @@ package com.example.demo;
 import javafx.scene.paint.Color;
 
 public class Rule {
-    private final double force;
+    private double force;
     private final Color donorType;
     private final Color acceptorType;
 
@@ -11,6 +11,10 @@ public class Rule {
         this.force = force;
         this.donorType = donorType;
         this.acceptorType = acceptorType;
+    }
+
+    public void setForce(double force) {
+        this.force = force;
     }
 
     public double getForce() {

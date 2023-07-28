@@ -25,7 +25,7 @@ public class Main extends Application {
     public void updateTextFields() {
         for (int i = 0; i < textFields.size(); i++) {
             Settings.forces[i] = Double.parseDouble(textFields.get(i).getText());
-            model.recreate();
+            model.commitChanges();
         }
     }
 
@@ -85,7 +85,7 @@ public class Main extends Application {
         button2.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         button2.setOnAction(actionEvent -> {
             Settings.randomSeed();
-            model.recreate();
+            model.commitChanges();
         });
         mainVBox.getChildren().add(button2);
 
@@ -116,14 +116,16 @@ public class Main extends Application {
         VBox vBox = new VBox();
         vBox.setSpacing(Settings.vBoxBlockSpacing);
         vBox.setStyle("-fx-background-color: aabbcc");
+        int textWidth = 95;
 
         HBox hBox2 = new HBox();
         hBox2.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox2.setStyle("-fx-background-color: ffcccc");
         Label labelHBox2 = new Label("Size of particles:");
-        labelHBox2.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox2.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox2.getChildren().add(labelHBox2);
         TextField textFieldHBox2 = new TextField(Double.toString(Settings.sizeOfParticles));
+        textFieldHBox2.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox2.setOnAction(actionEvent -> {
             Settings.setSizeOfParticles(Double.parseDouble(textFieldHBox2.getText()));
         });
@@ -135,9 +137,10 @@ public class Main extends Application {
         hBox3.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox3.setStyle("-fx-background-color: ffcccc");
         Label labelHBox3 = new Label("Force distance:");
-        labelHBox3.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox3.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox3.getChildren().add(labelHBox3);
         TextField textFieldHBox3 = new TextField(Double.toString(Settings.forceDistance));
+        textFieldHBox3.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox3.setOnAction(actionEvent -> {
             Settings.setForceDistance(Double.parseDouble(textFieldHBox3.getText()));
         });
@@ -149,9 +152,10 @@ public class Main extends Application {
         hBox4.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox4.setStyle("-fx-background-color: ffcccc");
         Label labelHBox4 = new Label("Friction force:");
-        labelHBox4.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox4.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox4.getChildren().add(labelHBox4);
         TextField textFieldHBox4 = new TextField(Double.toString(Settings.frictionForce));
+        textFieldHBox4.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox4.setOnAction(actionEvent -> {
             Settings.setFrictionForce(Double.parseDouble(textFieldHBox4.getText()));
         });
@@ -163,12 +167,13 @@ public class Main extends Application {
         hBox5.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox5.setStyle("-fx-background-color: ffcccc");
         Label labelHBox5 = new Label("Weigh error:");
-        labelHBox5.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox5.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox5.getChildren().add(labelHBox5);
         TextField textFieldHBox5 = new TextField(Double.toString(Settings.weightError));
+        textFieldHBox5.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox5.setOnAction(actionEvent -> {
             Settings.setWeightError(Double.parseDouble(textFieldHBox5.getText()));
-            model.resetParticles();
+            model.commitChanges();
         });
         textFieldHBox5.setAlignment(Pos.CENTER_RIGHT);
         hBox5.getChildren().add(textFieldHBox5);
@@ -178,9 +183,10 @@ public class Main extends Application {
         hBox6.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox6.setStyle("-fx-background-color: ffcccc");
         Label labelHBox6 = new Label("Atomic force:");
-        labelHBox6.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox6.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox6.getChildren().add(labelHBox6);
         TextField textFieldHBox6 = new TextField(Double.toString(Settings.atomicForce));
+        textFieldHBox6.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox6.setOnAction(actionEvent -> {
             Settings.setAtomicForce(Double.parseDouble(textFieldHBox6.getText()));
         });
@@ -192,9 +198,10 @@ public class Main extends Application {
         hBox7.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
         hBox7.setStyle("-fx-background-color: ffcccc");
         Label labelHBox7 = new Label("Atomic distance:");
-        labelHBox7.setPrefSize(160, Settings.textFieldHeight);
+        labelHBox7.setPrefSize(textWidth, Settings.textFieldHeight);
         hBox7.getChildren().add(labelHBox7);
         TextField textFieldHBox7 = new TextField(Double.toString(Settings.atomicForceDistance));
+        textFieldHBox7.setPrefWidth(Settings.vBoxWidth - textWidth);
         textFieldHBox7.setOnAction(actionEvent -> {
             Settings.setAtomicForceDistance(Double.parseDouble(textFieldHBox7.getText()));
         });
@@ -215,16 +222,18 @@ public class Main extends Application {
             VBox tempVBox = new VBox();
             tempVBox.setSpacing(Settings.vBoxBlockSpacing);
             tempVBox.setStyle("-fx-background-color: aabbcc");
+
             for (int j = 0; j < Settings.countOfColors; j++) {
+                int textWidth = 75;
                 HBox hBox1 = new HBox();
                 hBox1.setPrefSize(Settings.vBoxWidth, Settings.textFieldHeight);
                 hBox1.setStyle("-fx-background-color: ffcccc");
                 Label labelHBox1 = new Label("color " + (i + 1) + " to " + (j + 1) + ":");
-                labelHBox1.setPrefSize(70, Settings.textFieldHeight);
+                labelHBox1.setPrefSize(textWidth, Settings.textFieldHeight);
                 hBox1.getChildren().add(labelHBox1);
-
-                textFields.add(new TextField(String.valueOf(Settings.forces[counter])));
+                textFields.add(new TextField(Settings.decimalFormat.format(Settings.forces[counter])));
                 textFields.get(counter).setAlignment(Pos.CENTER_RIGHT);
+                textFields.get(counter).setPrefWidth(Settings.vBoxWidth - textWidth);
                 textFields.get(counter).setOnAction(actionEvent -> {
                     updateTextFields();
                 });
