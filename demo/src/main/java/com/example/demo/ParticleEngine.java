@@ -26,7 +26,6 @@ public class ParticleEngine {
         rules.add(new Rule(acceptor, donor, force));
     }
 
-
     public void updateParticles() {
 
 //        rule force
@@ -108,15 +107,12 @@ public class ParticleEngine {
             p.reset();
     }
 
-    public void commitRule() {
+    public void commitChanges(){
         int index = 0;
         for (Rule r : rules) {
             r.setForce(Settings.forces[index]);
             index++;
         }
-    }
-
-    public void commitParticle() {
         for (Particle p : particles)
             p.changeWeight();
     }
